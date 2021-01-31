@@ -24,3 +24,9 @@ Step5: Provision
 `terraformm init`
 `terraform plan`
 `terraform apply`
+
+## Administration
+
+The module provisions a network with 2 subnets and a private GKE
+Both private and public endpoints are enabled to avoid kubectl jumphost issues.
+

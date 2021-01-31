@@ -20,7 +20,7 @@ module "gke" {
       name               = "default-node-pool"
       machine_type       = "e2-medium"
       min_count          = 1
-      max_count          = 1
+      max_count          = 5
       disk_size_gb       = 100
       disk_type          = "pd-standard"
       image_type         = "COS"
