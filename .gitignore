@@ -1,2 +1,3 @@
 service-account.key
 .terraform
+init.js
