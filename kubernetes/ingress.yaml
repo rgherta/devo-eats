@@ -9,12 +9,8 @@ metadata:
     #kubernetes.io/ingress.allow-http: "false"
     kubernetes.io/ingress.global-static-ip-name: "my-static-ingress"
 spec:
-  tls:
-  - secretName: secret-tls-domain #explained in readme
-  rules:
-  - http:
-      paths:
-      - path: /*
-        backend:
-          serviceName: front-deployment
-          servicePort: http-port
+  # tls:
+  # - secretName: secret-tls-domain #explained in readme
+  backend:
+    serviceName: front-deployment
+    servicePort: http-port

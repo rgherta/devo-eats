@@ -29,9 +29,6 @@ metadata:
   labels:
     app: front
   name: front-deployment
-  annotations:
-    cloud.google.com/load-balancer-type: "Internal"
-    cloud.google.com/app-protocols: '{"http-port":"HTTPS","http-port":"HTTP"}'
 spec:
   ports:
   - name: http-port
@@ -40,6 +37,4 @@ spec:
     targetPort: 80
   selector:
     app: front
-  type: LoadBalancer
-status:
-  loadBalancer: {}
+  type: NodePort
