@@ -1,14 +1,14 @@
 module "gke" {
   source                     = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
   project_id                 = var.project_name
-  name                       = "friendly-eats-cluster"
+  name                       = var.cluster_name
   region                     = var.region
   zones                      = [var.zone]
   network                    = module.network.network_name
   subnetwork                 = "subnet-b"
   ip_range_pods              = "pod-cidr"
   ip_range_services          = "svc-cidr"
-  http_load_balancing        = false
+  http_load_balancing        = true
   horizontal_pod_autoscaling = true
   network_policy             = true
   enable_private_endpoint    = false

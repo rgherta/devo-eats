@@ -18,5 +18,16 @@ variable "zone" {
   description = "Zone to provision resources"
 }
 
+variable "cluster_name" {
+  type    = string
+  description = "GKE cluster name"
+}
+
+variable "network_name" {
+  type    = string
+  description = "Network name"
+}
+
+
 
 

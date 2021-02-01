@@ -3,7 +3,7 @@ module "network" {
   version = "3.0.1"
 
   project_id   = var.project_name
-  network_name = "vpc-cluster"
+  network_name = var.network_name
   routing_mode = "REGIONAL"
 
   subnets = [
@@ -48,3 +48,9 @@ module "network" {
     ]
 
 }
+
+
+# resource "google_compute_address" "external_static" {
+#   name = "external-gke-address"
+#   address_type = "EXTERNAL"
+# }

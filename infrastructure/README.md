@@ -4,7 +4,7 @@
 
 Step1: Create a project
 
-Step2: Enable GKE api in your project
+Step2: Enable GKE api in your project, also GCR
 
 Step3: Create a bucket for storing the tfstate
 
@@ -19,6 +19,8 @@ Set the environment variable
 ## Provisioning
 
 Update terraform.tfvars based on prerequisites
+
+Make sure CIDRs in network.tf do not overlap with any existing subnets/vpcs
 
 Step5: Provision
 `terraformm init`
