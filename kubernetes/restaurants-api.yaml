@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: micro-restaurants-deployment
+  labels:
+    app: micro-restaurants
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: micro-restaurants
+  template:
+    metadata:
+      labels:
+        app: micro-restaurants
+    spec:
+      containers:
+      - name: api
+        image: eu.gcr.io/dvotm-project/micro-restaurants:latest
+        env:
+        - name: "KEY"
+          value: "VALUE"
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: micro-restaurants
+  name: micro-restaurants
+spec:
+  ports:
+  - name: http-port
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: micro-restaurants
+  type: ClusterIP

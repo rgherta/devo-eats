@@ -2,13 +2,8 @@
 
 Static files are saved in the src folder.
 
+### Docker  
 
-### Enabling TLS  
-
-For enabling tls mode we generate the certs with 
-
-`openssl genrsa -out domain.key 2048`  
-`openssl req -new -key domain.key -out domain.csr -subj "/CN=friendly.eats.de"`  
-`openssl x509 -req -days 365 -in domain.csr -signkey domain.key -out domain.crt`  
-
-sample test certs are in certs folder
+Build the docker image  
+`docker build . -t eu.gcr.io/dvotm-project/frontend:latest`  
+`docker push eu.gcr.io/dvotm-project/frontend:latest`  

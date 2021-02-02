@@ -17,24 +17,24 @@ spec:
       containers:
       - name: frontend
         image: eu.gcr.io/dvotm-project/frontend:latest
-        env:
-        - name: "KEY"
-          value: "VALUE"
         ports:
         - containerPort: 80
+          name: http
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app: front
-  name: front-deployment
+  name: frontend-lb
+  annotations:
+    networking.gke.io/load-balancer-type: "Internal"
 spec:
   ports:
   - name: http-port
     port: 30000
     protocol: TCP
-    targetPort: 80
+    targetPort: http
   selector:
     app: front
-  type: NodePort
+  type: LoadBalancer
