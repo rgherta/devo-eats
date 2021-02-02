@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: micro-restaurants-deployment
+  labels:
+    app: micro-restaurants
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: micro-restaurants
+  template:
+    metadata:
+      labels:
+        app: micro-restaurants
+    spec:
+      containers:
+      - name: api
+        image: eu.gcr.io/dvotm-project/micro-firestore:1.0.2
+        env:
+        - name: COLLECTION
+          value: "restaurants"
+        - name: PORT
+          value: "8080"
+        ports:
+        - containerPort: 8080
+          name: port-api
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: micro-restaurants
+  labels:
+    app: micro-restaurants
+spec:
+  ports:
+  - name: http-port
+    port: 8080
+    protocol: TCP
+    targetPort: port-api
+  selector:
+    app: micro-restaurants
+  type: ClusterIP
