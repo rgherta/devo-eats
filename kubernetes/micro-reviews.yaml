@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: eu.gcr.io/dvotm-project/micro-firestore:1.0.2
+        image: eu.gcr.io/dvotm-project/micro-firestore:1.0.3
         env:
         - name: COLLECTION
           value: "reviews"

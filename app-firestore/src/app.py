@@ -27,7 +27,9 @@ def create():
     try:
         id = request.json['id']
         my_collection.document(id).set(request.json)
-        return jsonify({"success": True}), 200
+        response = jsonify({"success": True})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 200
     except Exception as e:
         return f"An Error Occured: {e}"
 
@@ -46,7 +48,9 @@ def read():
             return jsonify(todo.to_dict()), 200
         else:
             all_todos = [doc.to_dict() for doc in my_collection.stream()]
-            return jsonify(all_todos), 200
+            response = jsonify(all_todos)
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response, 200
     except Exception as e:
         return f"An Error Occured: {e}"
 
@@ -60,7 +64,9 @@ def update():
     try:
         id = request.json['id']
         my_collection.document(id).update(request.json)
-        return jsonify({"success": True}), 200
+        response = jsonify({"success": True})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 200
     except Exception as e:
         return f"An Error Occured: {e}"
 
@@ -73,7 +79,9 @@ def delete():
         # Check for ID in URL query
         todo_id = request.args.get('id')
         my_collection.document(todo_id).delete()
-        return jsonify({"success": True}), 200
+        response = jsonify({"success": True})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 200
     except Exception as e:
         return f"An Error Occured: {e}"
 
