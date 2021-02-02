@@ -5,9 +5,10 @@ LABEL project="micro-restaurants"
 COPY ./src /app
 WORKDIR /app
 
-RUN pip install -U Flask
+RUN pip install -U Flask firebase-admin
 
 ENV FLASK_APP="app.py"
 ENV FLASK_ENV="development"
 
-CMD ["python3", "-m", "flask", "run"]
+ENTRYPOINT ["python"]
+CMD ["app.py"]
