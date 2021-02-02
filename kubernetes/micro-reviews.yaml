@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: micro-reviews-deployment
+  labels:
+    app: micro-reviews
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: micro-reviews
+  template:
+    metadata:
+      labels:
+        app: micro-reviews
+    spec:
+      containers:
+      - name: api
+        image: eu.gcr.io/dvotm-project/micro-firestore:1.0.2
+        env:
+        - name: COLLECTION
+          value: "reviews"
+        - name: PORT
+          value: "8080"
+        ports:
+        - containerPort: 8080
+          name: port-api
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: micro-reviews
+  labels:
+    app: micro-reviews
+spec:
+  ports:
+  - name: http-port
+    port: 8080
+    protocol: TCP
+    targetPort: port-api
+  selector:
+    app: micro-reviews
+  type: ClusterIP
