@@ -16,14 +16,14 @@ spec:
     spec:
       containers:
       - name: api
-        image: eu.gcr.io/dvotm-project/micro-restaurants:1.1.0
+        image: eu.gcr.io/dvotm-project/micro-restaurants:1.1.5
         env:
         - name: COLLECTION
           value: "restaurants"
         - name: PORT
-          value: "8080"
+          value: "80"
         ports:
-        - containerPort: 8080
+        - containerPort: 80
           name: port-api
 ---
 apiVersion: v1
@@ -35,7 +35,7 @@ metadata:
 spec:
   ports:
   - name: http-port
-    port: 8080
+    port: 80
     protocol: TCP
     targetPort: port-api
   selector:
