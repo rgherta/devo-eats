@@ -6,7 +6,7 @@ Authentication against firestore made with service-account.key corresponding to 
 ### Docker  
 
 Build the docker image and push to gcr
-`docker build . -t eu.gcr.io/dvotm-project/micro-firestore`  
+`docker build . -t eu.gcr.io/dvotm-project/micro-restaurants`  
 
 
 

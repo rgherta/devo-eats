@@ -45,10 +45,23 @@ def read():
         todo_id = request.args.get('id')
         if todo_id:
             todo = my_collection.document(todo_id).get()
-            return jsonify(todo.to_dict()), 200
+            doc = todo.to_dict()
+            doc["id"] = todo_id
+            response = jsonify(doc)
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response, 200
         else:
-            all_todos = [doc.to_dict() for doc in my_collection.stream()]
-            response = jsonify(all_todos)
+
+            #all_todos = [doc.to_dict() for doc in my_collection.stream()]
+            docs = [ {doc.id : doc} for doc in my_collection.stream()]
+            results = []
+            for doc in docs:
+              key = (list(doc.keys())[0])
+              doct = doc[key].to_dict()
+              doct["id"] = key
+              results.append(doct)
+
+            response = jsonify(results)
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response, 200
     except Exception as e:
@@ -87,4 +100,4 @@ def delete():
 
 port = int(os.environ.get('PORT', 8080))
 if __name__ == '__main__':
-    app.run(threaded=True, host='0.0.0.0', port=port)
+    app.run(threaded=True, debug=True, host='0.0.0.0', port=port)
