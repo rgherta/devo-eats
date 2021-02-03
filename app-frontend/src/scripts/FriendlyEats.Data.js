@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 'use strict';
-
-const restaurants_api = "http://localhost:5001"
-const ratings_api = "http://localhost:5000"
+//${location.protocol}//${location.host}
+const restaurants_api = `/microservice-restaurants`
+const ratings_api = `/microservice-ratings`
 
 FriendlyEats.prototype.addRestaurant = function (data) {
   const collection = firebase.firestore().collection('restaurants');
