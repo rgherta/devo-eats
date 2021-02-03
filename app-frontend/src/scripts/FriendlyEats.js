@@ -30,18 +30,23 @@ function FriendlyEats() { // eslint-disable-line no-redeclare
 
   var that = this;
 
-  firebase.firestore().enablePersistence()
-    .then(function() {
-      return firebase.auth().signInAnonymously();
-    })
-    .then(function() {
-      that.initTemplates();
-      that.initRouter();
-      that.initReviewDialog();
-      that.initFilterDialog();
-    }).catch(function(err) {
-      console.log(err);
-    });
+  // firebase.firestore().enablePersistence()
+  //   .then(function() {
+  //     return firebase.auth().signInAnonymously();
+  //   })
+  //   .then(function() {
+  //     that.initTemplates();
+  //     that.initRouter();
+  //     that.initReviewDialog();
+  //     that.initFilterDialog();
+  //   }).catch(function(err) {
+  //     console.log(err);
+  //   });
+
+  that.initTemplates();
+  that.initRouter();
+  that.initReviewDialog();
+  that.initFilterDialog();
 }
 
 /**
@@ -65,21 +70,22 @@ FriendlyEats.prototype.initRouter = function() {
     .on({
       '/restaurants/*': function() {
         var path = that.getCleanPath(document.location.pathname);
+        console.log(path, " ", id)
         var id = path.split('/')[2];
         that.viewRestaurant(id);
       }
     })
     .resolve();
 
-  firebase
-    .firestore()
-    .collection('restaurants')
-    .limit(1)
-    .onSnapshot(function(snapshot) {
-      if (snapshot.empty) {
-        that.router.navigate('/setup');
-      }
-    });
+  // firebase
+  //   .firestore()
+  //   .collection('restaurants')
+  //   .limit(1)
+  //   .onSnapshot(function(snapshot) {
+  //     if (snapshot.empty) {
+  //       that.router.navigate('/setup');
+  //     }
+  //   });
 };
 
 FriendlyEats.prototype.getCleanPath = function(dirtyPath) {
@@ -90,9 +96,9 @@ FriendlyEats.prototype.getCleanPath = function(dirtyPath) {
   }
 };
 
-FriendlyEats.prototype.getFirebaseConfig = function() {
-  return firebase.app().options;
-};
+// FriendlyEats.prototype.getFirebaseConfig = function() {
+//   return firebase.app().options;
+// };
 
 FriendlyEats.prototype.getRandomItem = function(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -199,4 +205,5 @@ FriendlyEats.prototype.data = {
 
 window.onload = function() {
   window.app = new FriendlyEats();
+
 };

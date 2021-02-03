@@ -78,7 +78,8 @@ FriendlyEats.prototype.viewList = function(filters, filter_description) {
       that.replaceElement(document.querySelector('main'), noResultsEl);
       return;
     }
-    var data = doc.data();
+    //var data = doc.data();
+    var data = doc;
     data['.id'] = doc.id;
     data['go_to_restaurant'] = function() {
       that.router.navigate('/restaurants/' + doc.id);
@@ -127,7 +128,7 @@ FriendlyEats.prototype.viewSetup = function() {
     hasSectionHeader: false
   });
 
-  var config = this.getFirebaseConfig();
+  //var config = this.getFirebaseConfig();
   var noRestaurantsEl = this.renderTemplate('no-restaurants', config);
 
   var button = noRestaurantsEl.querySelector('#add_mock_data');
@@ -152,15 +153,15 @@ FriendlyEats.prototype.viewSetup = function() {
   this.replaceElement(document.querySelector('.header'), headerEl);
   this.replaceElement(document.querySelector('main'), noRestaurantsEl);
 
-  firebase
-    .firestore()
-    .collection('restaurants')
-    .limit(1)
-    .onSnapshot(function(snapshot) {
-      if (snapshot.size && !addingMockData) {
-        that.router.navigate('/');
-      }
-    });
+  // firebase
+  //   .firestore()
+  //   .collection('restaurants')
+  //   .limit(1)
+  //   .onSnapshot(function(snapshot) {
+  //     if (snapshot.size && !addingMockData) {
+  //       that.router.navigate('/');
+  //     }
+  //   });
 };
 
 FriendlyEats.prototype.initReviewDialog = function() {
@@ -172,12 +173,13 @@ FriendlyEats.prototype.initReviewDialog = function() {
     var pathname = that.getCleanPath(document.location.pathname);
     var id = pathname.split('/')[2];
 
+    //firebase.auth().currentUser.uid
     that.addRating(id, {
       rating: rating,
       text: dialog.querySelector('#text').value,
       userName: 'Anonymous (Web)',
       timestamp: new Date(),
-      userId: firebase.auth().currentUser.uid
+      userId: "Anonymous"
     }).then(function() {
       that.rerender();
     });
@@ -306,12 +308,34 @@ FriendlyEats.prototype.updateQuery = function(filters) {
 };
 
 FriendlyEats.prototype.viewRestaurant = function(id) {
+  console.log(id, "viewRestaurant")
   var sectionHeaderEl;
   var that = this;
 
-  return this.getRestaurant(id)
-    .then(function(doc) {
-      var data = doc.data();
+  //return this.getRestaurant(id)
+
+  // return fetch(`${restaurants_api}/list?id=${id}`)
+  // .then(response => console.log(response))
+  // .then(doc => {
+  //     console.log("requesting id", id, doc)
+  //     doc.id = id
+  //     console.log(doc)
+  //     return doc
+  // })
+
+  let getRatings= async (id) => {
+  //console.log(id)
+  //return firebase.firestore().collection('restaurants').doc(id).get();
+  let response = await fetch(`${ratings_api}/list?id=${id}`)
+  let data = await response.json()
+  console.log("requesting id", id, response, data)
+  return data
+  };
+
+
+    return this.getRestaurant(id)
+    .then( async function(doc) {
+      var data = doc;
       var dialog =  that.dialogs.add_review;
 
       data.show_add_review = function() {
@@ -326,43 +350,50 @@ FriendlyEats.prototype.viewRestaurant = function(id) {
       sectionHeaderEl
         .querySelector('.price')
         .append(that.renderPrice(data.price));
-      return doc.ref.collection('ratings').orderBy('timestamp', 'desc').get();
-    })
-    .then(function(ratings) {
-      var mainEl;
+       //return doc.ref.collection('ratings').orderBy('timestamp', 'desc').get();
 
-      if (ratings.size) {
-        mainEl = that.renderTemplate('main');
+       return await getRatings(doc.id)
+       .then(function(ratings) {
+        var mainEl;
 
-        ratings.forEach(function(rating) {
-          var data = rating.data();
-          var el = that.renderTemplate('review-card', data);
-          el.querySelector('.rating').append(that.renderRating(data.rating));
-          mainEl.querySelector('#cards').append(el);
+        console.log("ratings are", ratings)
+  
+        if (ratings) {
+          mainEl = that.renderTemplate('main');
+  
+          ratings.forEach(function(rating) {
+            var data = rating;
+            console.log("rendering", data)
+            var el = that.renderTemplate('review-card', data);
+            el.querySelector('.rating').append(that.renderRating(data.rating));
+            mainEl.querySelector('#cards').append(el);
+          });
+
+        } else {
+          mainEl = that.renderTemplate('no-ratings', {
+            add_mock_data: function() {
+              that.addMockRatings(id).then(function() {
+                that.rerender();
+              });
+            }
+          });
+        }
+  
+        var headerEl = that.renderTemplate('header-base', {
+          hasSectionHeader: true
         });
-      } else {
-        mainEl = that.renderTemplate('no-ratings', {
-          add_mock_data: function() {
-            that.addMockRatings(id).then(function() {
-              that.rerender();
-            });
-          }
-        });
-      }
-
-      var headerEl = that.renderTemplate('header-base', {
-        hasSectionHeader: true
+  
+        that.replaceElement(document.querySelector('.header'), sectionHeaderEl);
+        that.replaceElement(document.querySelector('main'), mainEl);
+      })
+      .then(function() {
+        that.router.updatePageLinks();
+      })
+      .catch(function(err) {
+        console.warn('Error rendering page', err);
       });
-
-      that.replaceElement(document.querySelector('.header'), sectionHeaderEl);
-      that.replaceElement(document.querySelector('main'), mainEl);
     })
-    .then(function() {
-      that.router.updatePageLinks();
-    })
-    .catch(function(err) {
-      console.warn('Error rendering page', err);
-    });
+ 
 };
 
 FriendlyEats.prototype.renderTemplate = function(id, data) {

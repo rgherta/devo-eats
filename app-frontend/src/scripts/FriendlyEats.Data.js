@@ -15,36 +15,71 @@
  */
 'use strict';
 
+const restaurants_api = "http://localhost:5001"
+const ratings_api = "http://localhost:5000"
+
 FriendlyEats.prototype.addRestaurant = function (data) {
   const collection = firebase.firestore().collection('restaurants');
   return collection.add(data);
 };
 
 FriendlyEats.prototype.getAllRestaurants = function (render) {
-  const query = firebase.firestore()
-    .collection('restaurants')
-    .orderBy('avgRating', 'desc')
-    .limit(50);
-  this.getDocumentsInQuery(query, render);
+  // const query = firebase.firestore()
+  //   .collection('restaurants')
+  //   .orderBy('avgRating', 'desc')
+  //   .limit(50);
+  // this.getDocumentsInQuery(query, render);
+
+  fetch(`${restaurants_api}/list`)
+  .then(response => {
+    console.log(response)
+    return response.json()})
+  .then(result => {
+    console.log(result)
+    result.sort((a,b) => b.avgRating - a.avgRating)
+    result = result.slice(0, 50)
+    this.getDocumentsInQuery(result, render);
+  })
+
+
 };
 
-FriendlyEats.prototype.getDocumentsInQuery = function (query, render) {
-  query.onSnapshot((snapshot) => {
-    if (!snapshot.size) {
-      return render();
-    }
+FriendlyEats.prototype.getDocumentsInQuery = function (elements, render) {
 
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === 'added' || change.type === 'modified') {
-        render(change.doc);
-      }
-    });
-  });
+  elements.forEach( (element) => {
+    return render(element)
+  })
+
+  // query.onSnapshot((snapshot) => {
+  //   if (!snapshot.size) {
+  //     return render();
+  //   }
+
+  //   snapshot.docChanges().forEach((change) => {
+  //     if (change.type === 'added' || change.type === 'modified') {
+  //       render(change.doc);
+  //     }
+  //   });
+  // });
 };
 
-FriendlyEats.prototype.getRestaurant = function (id) {
-  return firebase.firestore().collection('restaurants').doc(id).get();
+FriendlyEats.prototype.getRestaurant = async (id) => {
+  //console.log(id)
+  //return firebase.firestore().collection('restaurants').doc(id).get();
+  let response = await fetch(`${restaurants_api}/list?id=${id}`)
+  let data = await response.json()
+  console.log("requesting id", id, response, data)
+  return data
 };
+
+// FriendlyEats.prototype.getRatings= async (id) => {
+//   //console.log(id)
+//   //return firebase.firestore().collection('restaurants').doc(id).get();
+//   let response = await fetch(`${restaurants_api}/ratings?id=${id}`)
+//   let data = await response.json()
+//   console.log("requesting id", id, response, data)
+//   return data
+// };
 
 FriendlyEats.prototype.getFilteredRestaurants = function (filters, render) {
   let query = firebase.firestore().collection('restaurants');
@@ -70,24 +105,55 @@ FriendlyEats.prototype.getFilteredRestaurants = function (filters, render) {
   this.getDocumentsInQuery(query, render);
 };
 
-FriendlyEats.prototype.addRating = function (restaurantID, rating) {
-  const collection = firebase.firestore().collection('restaurants');
-  const document = collection.doc(restaurantID);
-  const newRatingDocument = document.collection('ratings').doc();
+FriendlyEats.prototype.addRating = async (restaurantID, rating) => {
+  //const collection = firebase.firestore().collection('restaurants');
+  //const document = collection.doc(restaurantID);
+  //const newRatingDocument = document.collection('ratings').doc();
 
-  return firebase.firestore().runTransaction((transaction) => {
-    return transaction.get(document).then((doc) => {
-      const data = doc.data();
+  // return firebase.firestore().runTransaction((transaction) => {
+  //   return transaction.get(document).then((doc) => {
+  //     const data = doc.data();
 
-      const newAverage =
-          (data.numRatings * data.avgRating + rating.rating) /
-          (data.numRatings + 1);
+  //     const newAverage =
+  //         (data.numRatings * data.avgRating + rating.rating) /
+  //         (data.numRatings + 1);
 
-      transaction.update(document, {
-        numRatings: data.numRatings + 1,
-        avgRating: newAverage
-      });
-      return transaction.set(newRatingDocument, rating);
-    });
-  });
+  //     transaction.update(document, {
+  //       numRatings: data.numRatings + 1,
+  //       avgRating: newAverage
+  //     });
+  //     return transaction.set(newRatingDocument, rating);
+  //   });
+  // });
+
+  //TODO: continue here
+  try{
+          let response = await fetch(`${ratings_api}/add`, 
+                      { method: "POST",
+                        mode: "no-cors",
+                        headers: {
+                          'Content-Type': 'application/json' 
+                        },
+                        body: JSON.stringify(
+                          { id: restaurantID, 
+                            r: rating 
+                          })
+                      })
+          let data = await response.json();
+          console.log("adding a new ratings", data);
+          return data
+        }
+  catch(err){
+    console.log(err)
+  }
+
+  
+// that.addRating(id, {
+//   rating: rating,
+//   text: dialog.querySelector('#text').value,
+//   userName: 'Anonymous (Web)',
+//   timestamp: new Date(),
+//   userId: "Anonymous"
+// })
+
 };
