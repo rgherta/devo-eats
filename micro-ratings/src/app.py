@@ -19,20 +19,14 @@ db = firestore.client()
 coll_name = os.environ.get('COLLECTION', 'restaurants')
 my_collection = db.collection(coll_name)
 
-print("initialized")
 
-@app.route('/add', methods=['POST'])
+@app.route('/microservice-ratings/add', methods=['POST'])
 def create():
     try:
-        #restaurantID = request.json['id']
-        #data = my_collection.document(restaurantID).collection("ratings").document().set(request.json)
-        #data={'key':restaurantID}
-        #resp = json.dumps(data)
 
         payload = json.loads(request.get_data())
         restaurantID = payload['id']
         data = my_collection.document(restaurantID).collection("ratings").document().set(payload['r'])
-
 
         print(request.get_data(), file=sys.stdout)
         print(data, file=sys.stdout)
@@ -41,7 +35,7 @@ def create():
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/list', methods=['GET'])
+@app.route('/microservice-ratings/list', methods=['GET'])
 def read():
     try:
         todo_id = request.args.get('id')
@@ -54,7 +48,7 @@ def read():
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/update', methods=['POST', 'PUT'])
+@app.route('/microservice-ratings/update', methods=['POST', 'PUT'])
 def update():
     """
         update() : Update document in Firestore collection with request body.
@@ -70,7 +64,7 @@ def update():
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/delete', methods=['GET', 'DELETE'])
+@app.route('/microservice-ratings/delete', methods=['GET', 'DELETE'])
 def delete():
     """
         delete() : Delete a document from Firestore collection.

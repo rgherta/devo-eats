@@ -17,7 +17,7 @@ db = firestore.client()
 coll_name = os.environ.get('COLLECTION', 'restaurants')
 my_collection = db.collection(coll_name)
 
-@app.route('/add', methods=['POST'])
+@app.route('/microservice-restaurants/add', methods=['POST'])
 def create():
     """
         create() : Add document to Firestore collection with request body.
@@ -33,7 +33,7 @@ def create():
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/list', methods=['GET'])
+@app.route('/microservice-restaurants/list', methods=['GET'])
 def read():
     """
         read() : Fetches documents from Firestore collection as JSON.
@@ -67,7 +67,7 @@ def read():
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/update', methods=['POST', 'PUT'])
+@app.route('/microservice-restaurants/update', methods=['POST', 'PUT'])
 def update():
     """
         update() : Update document in Firestore collection with request body.
@@ -83,7 +83,7 @@ def update():
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/delete', methods=['GET', 'DELETE'])
+@app.route('/microservice-restaurants/delete', methods=['GET', 'DELETE'])
 def delete():
     """
         delete() : Delete a document from Firestore collection.
