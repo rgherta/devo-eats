@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: micro-restaurants-deployment
+  name: micro-ratings-deployment
   labels:
-    app: micro-restaurants
+    app: micro-ratings
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: micro-restaurants
+      app: micro-ratings
   template:
     metadata:
       labels:
-        app: micro-restaurants
+        app: micro-ratings
     spec:
       containers:
       - name: api
-        image: eu.gcr.io/dvotm-project/micro-restaurants:1.1.0
+        image: eu.gcr.io/dvotm-project/micro-ratings:1.0.3
         env:
         - name: COLLECTION
-          value: "restaurants"
+          value: "ratings"
         - name: PORT
           value: "8080"
         ports:
@@ -29,9 +29,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: micro-restaurants
+  name: micro-ratings
   labels:
-    app: micro-restaurants
+    app: micro-ratings
 spec:
   ports:
   - name: http-port
@@ -39,5 +39,5 @@ spec:
     protocol: TCP
     targetPort: port-api
   selector:
-    app: micro-restaurants
+    app: micro-ratings
   type: ClusterIP
